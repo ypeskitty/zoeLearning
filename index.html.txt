@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>理化第五章：溫度與熱 (5-1 ~ 5-2)</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>自我評量：溫度與熱</h1>
+            <p>範圍：國二自然 5-1 ~ 5-2</p>
+        </header>
+
+        <div id="quiz-area" class="card">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            
+            <div id="question-container">
+                <h2 id="question-text">題目載入中...</h2>
+                <div id="options-container" class="options-list">
+                    </div>
+            </div>
+
+            <div id="feedback-container" class="feedback hidden">
+                <div id="feedback-icon"></div>
+                <p id="feedback-text"></p>
+                <div id="explanation" class="explanation"></div>
+                <button id="next-btn" onclick="nextQuestion()">下一題</button>
+            </div>
+        </div>
+
+        <div id="result-area" class="card hidden">
+            <h2>測驗完成！</h2>
+            <div class="score-display">
+                得分：<span id="final-score">0</span> / <span id="total-questions">0</span>
+            </div>
+            <p id="result-message"></p>
+            <button onclick="restartQuiz()" class="primary-btn">重新測驗</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

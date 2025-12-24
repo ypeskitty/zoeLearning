@@ -1,0 +1,166 @@
+// 題庫資料：您可以依此格式自由擴充題目
+const quizData = [
+    {
+        question: "在自製簡易溫度計的實驗中，為什麼要使用「細玻璃管」而不是粗玻璃管？",
+        options: [
+            "為了節省材料成本",
+            "因為細玻璃管比較不容易破裂",
+            "管徑越小，液面升降變化越明顯，容易觀察",
+            "細玻璃管的熱傳導效果比較好"
+        ],
+        correct: 2, // 對應 options 的索引 (0, 1, 2, 3)
+        [cite_start]explanation: "根據實驗結果，玻璃管的管徑越小，水位的高低變化越大，越容易觀察溫度的細微變化 [cite: 85]。"
+    },
+    {
+        question: "關於「熱平衡」，下列敘述何者正確？",
+        options: [
+            "熱量會由熱含量高的物體傳向熱含量低的物體",
+            "熱量會由溫度高的物體傳向溫度低的物體",
+            "兩物體達熱平衡時，其含有的熱量必定相等",
+            "質量越大的物體，最終平衡溫度一定越高"
+        ],
+        correct: 1,
+        [cite_start]explanation: "熱能會由「溫度高」的物體往「溫度低」的物體轉移，直到兩者溫度相同（熱平衡），而非取決於熱量多寡 [cite: 228, 251]。"
+    },
+    {
+        question: "若一大氣壓下，水的冰點為 32°F，沸點為 212°F。請問攝氏 30°C 等於華氏幾度？",
+        options: [
+            "68°F",
+            "86°F",
+            "96°F",
+            "100°F"
+        ],
+        correct: 1,
+        [cite_start]explanation: "換算公式為：F = 9/5 × C + 32。計算：9/5 × 30 + 32 = 54 + 32 = 86°F [cite: 214]。"
+    },
+    {
+        question: "根據比熱公式 $H = M \\times S \\times \\Delta T$，若使用同一熱源加熱（提供相同熱量 H），下列敘述何者正確？",
+        options: [
+            "質量 M 越大，溫度變化 $\\Delta T$ 越大",
+            "比熱 S 越大，溫度變化 $\\Delta T$ 越小",
+            "溫度變化 $\\Delta T$ 與 質量 M 成正比",
+            "物質種類不會影響溫度變化"
+        ],
+        correct: 1,
+        [cite_start]explanation: "當 H 固定時，M × S 與 $\\Delta T$ 成反比。亦即，質量越大或比熱越大的物質，溫度越難上升（變化越小）[cite: 462, 470]。"
+    },
+    {
+        question: "為什麼海邊的日夜溫差通常比內陸地區小？",
+        options: [
+            "因為海水的比熱比沙石大，溫度不易改變",
+            "因為海水會反射陽光",
+            "因為海邊風比較大，散熱快",
+            "因為內陸地區地勢通常較高"
+        ],
+        correct: 0,
+        [cite_start]explanation: "水的比熱大 (1.0)，沙石比熱小 (約0.2)。比熱大者，吸熱或放熱時溫度變化較小，因此海洋具有調節氣溫的功能 [cite: 493, 495]。"
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let isAnswered = false;
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    loadQuestion();
+});
+
+function loadQuestion() {
+    isAnswered = false;
+    const qData = quizData[currentQuestion];
+    
+    // 更新進度條
+    const progress = ((currentQuestion) / quizData.length) * 100;
+    document.getElementById('progress-fill').style.width = `${progress}%`;
+
+    // 載入題目
+    document.getElementById('question-text').textContent = `${currentQuestion + 1}. ${qData.question}`;
+    
+    // 產生選項
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = ''; // 清空舊選項
+
+    qData.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(index, btn);
+        optionsContainer.appendChild(btn);
+    });
+
+    // 隱藏回饋區
+    document.getElementById('feedback-container').classList.add('hidden');
+    document.getElementById('next-btn').textContent = (currentQuestion === quizData.length - 1) ? "查看結果" : "下一題";
+    
+    // 重新渲染數學公式 (MathJax)
+    if (window.MathJax) {
+        MathJax.typeset();
+    }
+}
+
+function checkAnswer(selectedIndex, btnElement) {
+    if (isAnswered) return; // 防止重複點擊
+    isAnswered = true;
+
+    const qData = quizData[currentQuestion];
+    const allOptions = document.querySelectorAll('.option-btn');
+    const feedbackText = document.getElementById('feedback-text');
+    const explanationText = document.getElementById('explanation');
+
+    // 鎖定所有按鈕
+    allOptions.forEach(btn => btn.disabled = true);
+
+    // 判斷對錯
+    if (selectedIndex === qData.correct) {
+        btnElement.classList.add('correct');
+        feedbackText.textContent = "答對了！🎉";
+        feedbackText.style.color = "var(--correct-color)";
+        score++;
+    } else {
+        btnElement.classList.add('wrong');
+        allOptions[qData.correct].classList.add('correct'); // 顯示正確答案
+        feedbackText.textContent = "答錯了。";
+        feedbackText.style.color = "var(--wrong-color)";
+    }
+
+    // 顯示詳解
+    explanationText.textContent = qData.explanation;
+    document.getElementById('feedback-container').classList.remove('hidden');
+}
+
+function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    document.getElementById('quiz-area').classList.add('hidden');
+    document.getElementById('result-area').classList.remove('hidden');
+    
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('total-questions').textContent = quizData.length;
+
+    const message = document.getElementById('result-message');
+    const percentage = (score / quizData.length) * 100;
+
+    if (percentage === 100) {
+        message.textContent = "太厲害了！全對！這單元的觀念你已經完全掌握囉！ 🌟";
+    } else if (percentage >= 60) {
+        message.textContent = "還不錯喔！再複習一下錯的題目會更棒！ 💪";
+    } else {
+        message.textContent = "別氣餒，翻翻講義重新釐清一下觀念吧！ 📚";
+    }
+}
+
+function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById('result-area').classList.add('hidden');
+    document.getElementById('quiz-area').classList.remove('hidden');
+    loadQuestion();
+}
